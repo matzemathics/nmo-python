@@ -108,7 +108,7 @@ dependencies = [
  "cexpr",
  "clang-sys",
  "clap 2.34.0",
- "env_logger 0.8.4",
+ "env_logger",
  "lazy_static",
  "lazycell",
  "log",
@@ -284,19 +284,6 @@ checksum = "a19187fea3ac7e84da7dacf48de0c45d63c6a76f9490dae389aead16c243fce3"
 dependencies = [
  "atty",
  "humantime",
- "log",
- "regex",
- "termcolor",
-]
-
-[[package]]
-name = "env_logger"
-version = "0.10.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "85cdab6a89accf66733ad5a1693a4dcced6aeff64602b634530dd73c1f3ee9f0"
-dependencies = [
- "humantime",
- "is-terminal",
  "log",
  "regex",
  "termcolor",
@@ -522,6 +509,7 @@ dependencies = [
 [[package]]
 name = "macros"
 version = "0.0.1"
+source = "git+https://github.com/knowsys/nemo.git?branch=decentralized-api#1439f60b88de7ea2a8c2553d5a6933e33f33837b"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -561,13 +549,14 @@ dependencies = [
 [[package]]
 name = "nemo"
 version = "0.1.1-dev"
+source = "git+https://github.com/knowsys/nemo.git?branch=decentralized-api#1439f60b88de7ea2a8c2553d5a6933e33f33837b"
 dependencies = [
  "ascii_tree",
  "bytesize",
  "clap 4.3.0",
  "colored",
  "csv",
- "env_logger 0.10.0",
+ "env_logger",
  "flate2",
  "howlong",
  "linked-hash-map",
