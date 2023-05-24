@@ -137,7 +137,10 @@ impl NemoEngine {
 
     fn result(mut slf: PyRefMut<'_, Self>, predicate: String) -> PyResult<Py<NemoResults>> {
         let iter = slf.0.table_scan(predicate.into()).py_res()?;
-        let results = NemoResults(Box::new(iter.collect::<Vec<_>>().into_iter()));
+        let results = NemoResults(Box::new(
+            iter.into_iter().flatten().collect::<Vec<_>>().into_iter(),
+        ));
+
         Py::new(slf.py(), results)
     }
 }

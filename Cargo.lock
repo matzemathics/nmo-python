@@ -522,7 +522,7 @@ dependencies = [
 [[package]]
 name = "macros"
 version = "0.0.1"
-source = "git+https://github.com/knowsys/nemo.git?branch=data-value-api#1547cefe3d582e4aabeb706570d4b9a991c28b18"
+source = "git+https://github.com/knowsys/nemo.git?branch=data-value-api#903b9ca67b4331ec83b77d024ed6a5e1540cd236"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -562,7 +562,7 @@ dependencies = [
 [[package]]
 name = "nemo"
 version = "0.1.1-dev"
-source = "git+https://github.com/knowsys/nemo.git?branch=data-value-api#1547cefe3d582e4aabeb706570d4b9a991c28b18"
+source = "git+https://github.com/knowsys/nemo.git?branch=data-value-api#903b9ca67b4331ec83b77d024ed6a5e1540cd236"
 dependencies = [
  "ascii_tree",
  "bytesize",
