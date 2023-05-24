@@ -6,13 +6,14 @@ from nmo_python import load_string, NemoEngine
 
 rules="""
 data(1,2) .
-result(?x, !v) :- data(?y, ?x) .
+data(hi,42) .
+data(hello,world) .
+
+calculated(?x, !v) :- data(?y, ?x) .
 """
 
 engine = NemoEngine(load_string(rules))
-predicates = engine.reason()
+engine.reason()
 
-for pred in predicates:
-  print(pred.name())
-  print(engine.result(pred))
+print(list(engine.result("calculated")))
 ```

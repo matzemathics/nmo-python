@@ -1,9 +1,9 @@
-use std::fs::read_to_string;
+use std::{collections::HashSet, fs::read_to_string};
 
 use nemo::{
     io::{OutputFileManager, RecordWriter},
     logical::execution::ExecutionEngine,
-    physical::dictionary::value_serializer::TrieSerializer,
+    physical::datatypes::{DataValueT, Double, Float},
 };
 use pyo3::{create_exception, prelude::*};
 
@@ -40,6 +40,21 @@ fn load_string(rules: String) -> PyResult<NemoProgram> {
     Ok(NemoProgram(program))
 }
 
+#[pymethods]
+impl NemoProgram {
+    fn output_predicates(&self) -> Vec<String> {
+        self.0.output_predicates().map(|id| id.name()).collect()
+    }
+
+    fn edb_predicates(&self) -> HashSet<String> {
+        self.0
+            .edb_predicates()
+            .into_iter()
+            .map(|id| id.name())
+            .collect()
+    }
+}
+
 #[pyclass]
 struct NemoOutputManager(nemo::io::OutputFileManager);
 
@@ -54,14 +69,31 @@ impl NemoOutputManager {
     }
 }
 
-#[pyclass]
-#[derive(Clone)]
-struct NemoIdb(nemo::logical::execution::execution_engine::IdbPredicate);
+// unsendable, because it contains a Ref to a PrefixedStringDictionary
+#[pyclass(unsendable)]
+struct NemoResults(Box<dyn Iterator<Item = Vec<DataValueT>>>);
 
 #[pymethods]
-impl NemoIdb {
-    fn name(&self) -> String {
-        format!("{}", self.0)
+impl NemoResults {
+    fn __iter__(slf: PyRef<'_, Self>) -> PyRef<'_, Self> {
+        slf
+    }
+
+    fn __next__(mut slf: PyRefMut<'_, Self>) -> Option<Vec<PyObject>> {
+        let next = slf.0.next()?;
+
+        Some(
+            next.into_iter()
+                .map(|v| match v {
+                    DataValueT::String(s) => s.into_py(slf.py()),
+                    DataValueT::U32(n) => n.into_py(slf.py()),
+                    DataValueT::U64(n) => n.into_py(slf.py()),
+                    DataValueT::I64(n) => n.into_py(slf.py()),
+                    DataValueT::Float(n) => (<Float as Into<f32>>::into(n)).into_py(slf.py()),
+                    DataValueT::Double(n) => (<Double as Into<f64>>::into(n)).into_py(slf.py()),
+                })
+                .collect(),
+        )
     }
 }
 
@@ -76,45 +108,38 @@ impl NemoEngine {
         Ok(NemoEngine(engine))
     }
 
-    fn reason(&mut self) -> PyResult<Vec<NemoIdb>> {
+    fn program(&self) -> NemoProgram {
+        NemoProgram(self.0.program().clone())
+    }
+
+    fn reason(&mut self) -> PyResult<()> {
         self.0.execute().py_res()?;
-        let results = self.0.combine_results().py_res()?;
-        Ok(results.into_iter().map(NemoIdb).collect())
+        Ok(())
     }
 
     fn write_result(
-        &self,
+        &mut self,
         output_manager: &PyCell<NemoOutputManager>,
-        predicate: NemoIdb,
+        predicate: String,
     ) -> PyResult<()> {
+        let identifier = predicate.into();
         let mut writer = output_manager
             .borrow()
             .0
-            .create_file_writer(predicate.0.identifier())
+            .create_file_writer(&identifier)
             .py_res()?;
 
-        if let Some(table) = self.0.table_serializer(predicate.0) {
+        if let Some(table) = self.0.table_serializer(identifier).py_res()? {
             writer.write_trie(table).py_res()?;
         }
 
         Ok(())
     }
 
-    fn result(&self, predicate: NemoIdb) -> PyResult<Vec<Vec<String>>> {
-        let Some(mut table) = self.0.table_serializer(predicate.0) else { return Ok(Vec::new()); };
-
-        let mut res = Vec::new();
-
-        while let Some(record) = table.next_record() {
-            res.push(
-                record
-                    .into_iter()
-                    .map(|v| String::from_utf8(v.as_ref().to_vec()).unwrap())
-                    .collect(),
-            );
-        }
-
-        Ok(res)
+    fn result(mut slf: PyRefMut<'_, Self>, predicate: String) -> PyResult<Py<NemoResults>> {
+        let iter = slf.0.table_scan(predicate.into()).py_res()?;
+        let results = NemoResults(Box::new(iter.collect::<Vec<_>>().into_iter()));
+        Py::new(slf.py(), results)
     }
 }
 
@@ -123,6 +148,7 @@ impl NemoEngine {
 fn nmo_python(_py: Python, m: &PyModule) -> PyResult<()> {
     m.add_class::<NemoProgram>()?;
     m.add_class::<NemoEngine>()?;
+    m.add_class::<NemoResults>()?;
     m.add_class::<NemoOutputManager>()?;
     m.add_function(wrap_pyfunction!(load_file, m)?)?;
     m.add_function(wrap_pyfunction!(load_string, m)?)?;
