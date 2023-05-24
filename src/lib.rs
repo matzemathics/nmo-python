@@ -69,9 +69,8 @@ impl NemoOutputManager {
     }
 }
 
-// unsendable, because it contains a Ref to a PrefixedStringDictionary
-#[pyclass(unsendable)]
-struct NemoResults(Box<dyn Iterator<Item = Vec<DataValueT>>>);
+#[pyclass]
+struct NemoResults(Box<dyn Iterator<Item = Vec<DataValueT>> + Send>);
 
 #[pymethods]
 impl NemoResults {
