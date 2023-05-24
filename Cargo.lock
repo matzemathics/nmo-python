@@ -509,7 +509,7 @@ dependencies = [
 [[package]]
 name = "macros"
 version = "0.0.1"
-source = "git+https://github.com/knowsys/nemo.git?branch=decentralized-api#1439f60b88de7ea2a8c2553d5a6933e33f33837b"
+source = "git+https://github.com/knowsys/nemo.git#39832c0591df86c55abd22dc4a71d8186d826bfd"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -549,7 +549,7 @@ dependencies = [
 [[package]]
 name = "nemo"
 version = "0.1.1-dev"
-source = "git+https://github.com/knowsys/nemo.git?branch=decentralized-api#1439f60b88de7ea2a8c2553d5a6933e33f33837b"
+source = "git+https://github.com/knowsys/nemo.git#39832c0591df86c55abd22dc4a71d8186d826bfd"
 dependencies = [
  "ascii_tree",
  "bytesize",
@@ -558,6 +558,7 @@ dependencies = [
  "csv",
  "env_logger",
  "flate2",
+ "getrandom",
  "howlong",
  "linked-hash-map",
  "log",
