@@ -118,8 +118,8 @@ impl NemoEngine {
 
     fn write_result(
         &mut self,
-        output_manager: &PyCell<NemoOutputManager>,
         predicate: String,
+        output_manager: &PyCell<NemoOutputManager>,
     ) -> PyResult<()> {
         let identifier = predicate.into();
         let mut writer = output_manager
