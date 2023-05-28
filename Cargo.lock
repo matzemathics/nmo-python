@@ -506,7 +506,7 @@ checksum = "518ef76f2f87365916b142844c16d8fefd85039bc5699050210a7778ee1cd1de"
 [[package]]
 name = "macros"
 version = "0.0.1"
-source = "git+https://github.com/knowsys/nemo.git?branch=identifier-from-string#5c6575fb798101362799288c783b2b46fb214b27"
+source = "git+https://github.com/knowsys/nemo.git#26462e24551302f1a04106116afb887f9d4a9ea0"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -546,7 +546,7 @@ dependencies = [
 [[package]]
 name = "nemo"
 version = "0.1.1-dev"
-source = "git+https://github.com/knowsys/nemo.git?branch=identifier-from-string#5c6575fb798101362799288c783b2b46fb214b27"
+source = "git+https://github.com/knowsys/nemo.git#26462e24551302f1a04106116afb887f9d4a9ea0"
 dependencies = [
  "ascii_tree",
  "bytesize",
