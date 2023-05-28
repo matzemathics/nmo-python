@@ -2,17 +2,25 @@
 
 example usage:
 ```python
-from nmo_python import load_string, NemoEngine
+from nmo_python import load_string, NemoEngine, NemoOutputManager
 
 rules="""
 data(1,2) .
-result(?x, !v) :- data(?y, ?x) .
+data(hi,42) .
+data(hello,world) .
+
+calculated(?x, !v) :- data(?y, ?x) .
 """
 
 engine = NemoEngine(load_string(rules))
-predicates = engine.reason()
+engine.reason()
 
-for pred in predicates:
-  print(pred.name())
-  print(engine.result(pred))
+print(list(engine.result("calculated")))
+
+output_manager = NemoOutputManager("results", gzip=True)
+engine.write_result("calculated", output_manager)
 ```
+
+## Known limitations
+
+Currently `any` values are not correctly transformed into python types. This will be fixed once a missing feature in nemo (knowsys/nemo#245) is implemented.
