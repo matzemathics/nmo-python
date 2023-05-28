@@ -107,10 +107,6 @@ impl NemoEngine {
         Ok(NemoEngine(engine))
     }
 
-    fn program(&self) -> NemoProgram {
-        NemoProgram(self.0.program().clone())
-    }
-
     fn reason(&mut self) -> PyResult<()> {
         self.0.execute().py_res()?;
         Ok(())
