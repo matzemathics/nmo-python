@@ -1,5 +1,8 @@
 # nmo-python - Python bindings for nemo
 
+> **Note**
+> This repository has been migrated to [knowsys/nemo](https://github.com/knowsys/nemo)
+
 example usage:
 ```python
 from nmo_python import load_string, NemoEngine, NemoOutputManager
